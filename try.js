@@ -1,16 +1,18 @@
 var fs = require('fs');
 var natural = require('natural');
-var tokenizer = new natural.WordTokenizer();
-var wordcount = require('word-count');
-var WordPOS = require('wordpos');
-wordpos = new WordPOS();
-var stringSimilarity = require('string-similarity');
+var tokenizer = new natural.WordTokenizer(); //why new keyword?
+var wordcount = require('word-count'); //Can't natural solve this?, Why another library?
+var WordPOS = require('wordpos'); //Same as line 4
+wordpos = new WordPOS(); //again new operator without a variable, how will you access this?
+var stringSimilarity = require('string-similarity'); //Why not new here?
+
+//puspose of the following variables , why not commented?
 var noun_covered = 0;
 var adjectives_covered = 0;
 var verbs_covered = 0;
 var adverbs_covered = 0;
 var is_word_limit_ok;
-var mydocument_token_array = new Array(4);
+var mydocument_token_array = new Array(4); //Why fixed size?
 var standard_token_array = new Array(4);
 var similarity = 0;
 var mistakes = 0;
@@ -21,8 +23,8 @@ var remark_to_reject_due_to_count = 'null';
 
 
 //reading files required
-var my_document = fs.readFileSync('document.txt', 'utf-8');
-var standard_document = fs.readFileSync('document2.txt', 'utf-8');
+var my_document = fs.readFileSync('document.txt', 'utf-8'); //What will happen if the file size grows to 1 GB? Will this work?
+var standard_document = fs.readFileSync('document2.txt', 'utf-8'); // Same as line 26
 var keyWords = fs.readFileSync('keyWords.txt', 'utf-8');
 var dictionary = fs.readFileSync('dictionary.txt', 'utf-8');
 
@@ -32,8 +34,12 @@ var countwords_my = wordcount(my_document);
 var countwords_standard = wordcount(standard_document);
 
 //function to check word limit
+
+//Why the output is not updating the JSON...How will you use this data? If it is getting used in other place in this code, why comment is talking about it?
+
+//Write the following code in ES6 format
 function check_word_limit() {
-	var range1 = countwords_standard - countwords_standard * 0.1;
+	var range1 = countwords_standard - countwords_standard * 0.1; //What is this formulae for?
 	var range2 = countwords_standard + countwords_standard * 0.1;
 	if (countwords_my < range1 || countwords_my > range2) {
 		is_word_limit_ok = "No";
@@ -47,6 +53,8 @@ function check_word_limit() {
 		is_word_limit_ok = "yes";
 	}
 }
+
+//Why commented code is sitting here?
 
 //function to divide document into noun, adjectieves, verb, adverb
 /*function document_token(document, arr) {
@@ -68,6 +76,7 @@ function check_word_limit() {
 	});
 }*/
 
+//What is 'x' here?
 function x(document) {
 	return new Promise((resolve, reject) => {
 		wordpos.getNouns(document, function (result) {
@@ -182,7 +191,7 @@ function calculate_similarity() {
 //function to check spelling from dictionary
 function checking_spelling() {
 	var token_dictionary = tokenizer.tokenize(dictionary);
-	var token_mydocument = tokenizer.tokenize(standard_document);
+	var token_mydocument = tokenizer.tokenize(my_document);
 	var spellcheck = new natural.Spellcheck(token_dictionary);
 
 	for (i in token_mydocument) {
@@ -197,7 +206,7 @@ function checking_spelling() {
 //fuction to check some keywords are present or not
 function checking_keywords() {
 
-	var token_mydocument = tokenizer.tokenize(standard_document);
+	var token_mydocument = tokenizer.tokenize(my_document);
 	var token_keywords = tokenizer.tokenize(keyWords);
 	var spellcheck = new natural.Spellcheck(token_mydocument);
 
@@ -207,6 +216,8 @@ function checking_keywords() {
 			concept_covered.push(token_keywords[i]);
 		}
 	}
+	
+	// Why console.log in the final code?
 	console.log("These are the concepts that you have covered :" + concept_covered);
 	console.log("\nExtra marks for that :" + extra_marks_given);
 }
@@ -254,6 +265,8 @@ function json_creation() {
 		}
 	};
 
+	//Why special respect for ES6 here
+	
 	let json = JSON.stringify(output, null, 2);
 	fs.writeFile('myjsondata.json', json, 'utf8', (err) => {
 		if (err) {

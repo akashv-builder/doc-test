@@ -28,21 +28,21 @@ function getData() {
 			var part_of_speech_variation_adjective = JSON.stringify(myarr.myjsonobj.part_of_speech_variation.adjective_variation);
 			var part_of_speech_variation_verb = JSON.stringify(myarr.myjsonobj.part_of_speech_variation.verb_variation);
 			var part_of_speech_variation_adverb = JSON.stringify(myarr.myjsonobj.part_of_speech_variation.adverb_variation);
-			
-			
+
+
 			var temp = 0;
 			if (part_of_speech_variation_noun > 60 && part_of_speech_variation_noun < 80 || part_of_speech_variation_adjective > 60 && part_of_speech_variation_adjective < 80 || part_of_speech_variation_verb > 60 && part_of_speech_variation_verb < 80 || part_of_speech_variation_adverb > 60 && part_of_speech_variation_adverb < 80) {
-				temp -= 10
+				temp = temp - 10;
 			} else if (part_of_speech_variation_noun > 40 && part_of_speech_variation_noun < 60 || part_of_speech_variation_adjective > 40 && part_of_speech_variation_adjective < 60 || part_of_speech_variation_verb > 60 && part_of_speech_variation_verb < 60 || part_of_speech_variation_adverb > 40 && part_of_speech_variation_adverb < 60) {
-				temp -= 20
+				temp = temp - 20;
 			} else if (part_of_speech_variation_noun < 40 || part_of_speech_variation_adjective < 40 || part_of_speech_variation_verb < 40 || part_of_speech_variation_adverb < 40) {
-				temp -= 30;
+				temp = temp - 30;
 			}
-			
-			var result = 500 - (no_of_mistakes * 0.5 + extra_marks - temp);
-			document.getElementById('overall').innerHTML = result;
-			
-			var percentage1=result/5;
+
+			var result = (500 - parseInt(no_of_mistakes) + temp) + parseInt(extra_marks);
+			document.getElementById('overall').innerHTML =result;
+
+				var percentage1 = result/5;
 			document.getElementById('percentage').innerHTML = percentage1;
 
 			document.getElementById('no_of_words_standard1').innerHTML = no_of_words_standard;
@@ -65,7 +65,7 @@ function getData() {
 			document.getElementById('part_of_speech_variation_noun1').innerHTML = part_of_speech_variation_noun;
 			document.getElementById('part_of_speech_variation_adjective1').innerHTML = part_of_speech_variation_adjective;
 			document.getElementById('part_of_speech_variation_verb1').innerHTML = part_of_speech_variation_verb;
-			document.getElementById('part_of_speech_variation_adverb1').innerHTML = part_of_speech_variation_adverb;	
+			document.getElementById('part_of_speech_variation_adverb1').innerHTML = part_of_speech_variation_adverb;
 		}
 	};
 }
