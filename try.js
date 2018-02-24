@@ -54,28 +54,6 @@ function check_word_limit() {
 	}
 }
 
-//Why commented code is sitting here?
-
-//function to divide document into noun, adjectieves, verb, adverb
-/*function document_token(document, arr) {
-	//counting nouns
-	wordpos.getNouns(document, function (result) {
-		arr[0] = result.length;
-	});
-
-	wordpos.getAdjectives(document, function (result) {
-		arr[1] = result.length;
-	});
-
-	wordpos.getVerbs(document, function (result) {
-		arr[2] = result.length;
-	});
-
-	wordpos.getAdverbs(document, function (result) {
-		arr[3] = result.length;
-	});
-}*/
-
 //What is 'x' here?
 function x(document) {
 	return new Promise((resolve, reject) => {
@@ -234,7 +212,7 @@ checking_keywords();
 
 function json_creation() {
 
-	let output = {
+	var output = {
 		myjsonobj: {
 			no_of_words: {
 				standard: countwords_standard,
@@ -267,7 +245,7 @@ function json_creation() {
 
 	//Why special respect for ES6 here
 	
-	let json = JSON.stringify(output, null, 2);
+	var json = JSON.stringify(output, null, 2);
 	fs.writeFile('myjsondata.json', json, 'utf8', (err) => {
 		if (err) {
 			console.log("error");
