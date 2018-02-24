@@ -1,12 +1,15 @@
+//function to fire http-request
 function getData() {
 	var xmlhttp = new XMLHttpRequest();
 	var url = "http://localhost:3000/db";
 	xmlhttp.open("GET", url, true);
+	//sending the http-request
 	xmlhttp.send();
 
 	xmlhttp.onreadystatechange = function () {
 		if (this.readyState == 4 && this.status == 200) {
 			var myarr = JSON.parse(this.responseText);
+			//retriving the different data and storing it into the variable
 			var no_of_words_standard = JSON.stringify(myarr.myjsonobj.no_of_words.standard);
 			var no_of_words_user = JSON.stringify(myarr.myjsonobj.no_of_words.user_doc);
 			var word_limit_ok = JSON.stringify(myarr.myjsonobj.word_limit_ok);
@@ -29,7 +32,7 @@ function getData() {
 			var part_of_speech_variation_verb = JSON.stringify(myarr.myjsonobj.part_of_speech_variation.verb_variation);
 			var part_of_speech_variation_adverb = JSON.stringify(myarr.myjsonobj.part_of_speech_variation.adverb_variation);
 
-
+			//logic to calculate the % and total marks
 			var temp = 0;
 			if (part_of_speech_variation_noun > 60 && part_of_speech_variation_noun < 80 || part_of_speech_variation_adjective > 60 && part_of_speech_variation_adjective < 80 || part_of_speech_variation_verb > 60 && part_of_speech_variation_verb < 80 || part_of_speech_variation_adverb > 60 && part_of_speech_variation_adverb < 80) {
 				temp = temp - 10;
@@ -38,13 +41,14 @@ function getData() {
 			} else if (part_of_speech_variation_noun < 40 || part_of_speech_variation_adjective < 40 || part_of_speech_variation_verb < 40 || part_of_speech_variation_adverb < 40) {
 				temp = temp - 30;
 			}
-
+			//calculating result
 			var result = (500 - parseInt(no_of_mistakes) + temp) + parseInt(extra_marks);
-			document.getElementById('overall').innerHTML =result;
-
-				var percentage1 = result/5;
+			document.getElementById('overall').innerHTML = result;
+			//calculating percentage
+			var percentage1 = result / 5;
 			document.getElementById('percentage').innerHTML = percentage1;
 
+			//setting all the variables to the html page
 			document.getElementById('no_of_words_standard1').innerHTML = no_of_words_standard;
 			document.getElementById('no_of_words_user1').innerHTML = no_of_words_user;
 			document.getElementById('word_limit_ok1').innerHTML = word_limit_ok;

@@ -1,11 +1,11 @@
 //declaration of different libraries to be used 
 var fs = require('fs');
 var natural = require('natural');
-var tokenizer = new natural.WordTokenizer(); 
-var wordcount = require('word-count'); 
-var WordPOS = require('wordpos'); 
-wordpos = new WordPOS(); 
-var stringSimilarity = require('string-similarity'); 
+var tokenizer = new natural.WordTokenizer();
+var wordcount = require('word-count');
+var WordPOS = require('wordpos');
+wordpos = new WordPOS();
+var stringSimilarity = require('string-similarity');
 
 //variables to store part of speech % coverage
 var noun_covered = 0;
@@ -17,33 +17,28 @@ var adverbs_covered = 0;
 var is_word_limit_ok;
 
 //array to store differnt parts of speech
-var mydocument_token_array = new Array(4); 
+var mydocument_token_array = new Array(4);
 var standard_token_array = new Array(4);
 
 //variable to store similarity
 var similarity = 0;
-
 //variable to store no of mistakes
 var mistakes = 0;
-
 //array to store all the mistakes
 var incorrectWords = new Array();
-
 //variable to store extra marks given
 var extra_marks_given = 0;
-
 //array to store all the concept covered
 var concept_covered = new Array();
-
 //varible to store remark to reject
 var remark_to_reject_due_to_count = 'null';
 
 
 //reading files required
 //reading base document
-var my_document = fs.readFileSync('document.txt', 'utf-8'); 
+var my_document = fs.readFileSync('document.txt', 'utf-8');
 //reading source document
-var standard_document = fs.readFileSync('document2.txt', 'utf-8'); 
+var standard_document = fs.readFileSync('document2.txt', 'utf-8');
 //reading keywords
 var keyWords = fs.readFileSync('keyWords.txt', 'utf-8');
 //reading dictionary
@@ -57,7 +52,7 @@ var countwords_standard = wordcount(standard_document);
 //function to check word limit
 function check_word_limit() {
 	//formula to calculate range variation
-	var range1 = countwords_standard - countwords_standard * 0.1; //What is this formulae for?
+	var range1 = countwords_standard - countwords_standard * 0.1;
 	var range2 = countwords_standard + countwords_standard * 0.1;
 	if (countwords_my < range1 || countwords_my > range2) {
 		is_word_limit_ok = "No";
@@ -73,7 +68,7 @@ function check_word_limit() {
 }
 
 //applying promise to calculate the different part of speech of base and store in array
-function calculate_speech_base(document) {
+function calculate_token_base(document) {
 	return new Promise((resolve, reject) => {
 		wordpos.getNouns(document, function (result) {
 			standard_token_array[0] = result.length;
@@ -102,8 +97,8 @@ function calculate_speech_base(document) {
 
 
 //then of function calculate_token_base in this calling function calculate_token_standard
-calculate_speech_base(standard_document).then((message) => {
-		function calculate_speech_my(document) {
+calculate_token_base(standard_document).then((message) => {
+		function calculate_token_standard(document) {
 			return new Promise((resolve, reject) => {
 				wordpos.getNouns(document, function (result) {
 					mydocument_token_array[0] = result.length;
@@ -132,7 +127,7 @@ calculate_speech_base(standard_document).then((message) => {
 
 
 		//then of function calculate_token_standard once it completes performing the other tasks
-		calculate_speech_my(my_document).then((message) => {
+		function calculate_token_standard(my_document).then((message) => {
 				//calling token variation method
 				calculate_token_variation();
 				//creating the json
@@ -155,7 +150,7 @@ calculate_speech_base(standard_document).then((message) => {
 //function to print noun, adjectieves, verb, adverb of user document
 function print_mydocument_token() {
 	for (var i = 0; i < 4; i++) {
-		//	console.log("Reading your file");
+		//console.log("Reading your file");
 		console.log(mydocument_token_array[i]);
 	}
 }
@@ -163,7 +158,7 @@ function print_mydocument_token() {
 //function to print noun, adjectieves, verb, adverb of standard document
 function print_standard_token() {
 	for (var i = 0; i < 4; i++) {
-		//	console.log("Reading standard file");
+		//console.log("Reading standard file");
 		console.log(standard_token_array[i]);
 	}
 }
@@ -213,7 +208,8 @@ function checking_keywords() {
 			concept_covered.push(token_keywords[i]);
 		}
 	}
-	
+
+	// Why console.log in the final code?
 	console.log("These are the concepts that you have covered :" + concept_covered);
 	console.log("\nExtra marks for that :" + extra_marks_given);
 }
@@ -230,6 +226,7 @@ checking_keywords();
 
 //function to create json
 function json_creation() {
+
 	var output = {
 		myjsonobj: {
 			no_of_words: {
