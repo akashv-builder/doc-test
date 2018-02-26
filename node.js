@@ -174,14 +174,12 @@ function calculate_token_variation() {
 	adjectives_covered = ((standard_token_array[1] - mydocument_token_array[1]) / standard_token_array[1]) * 100;
 	verbs_covered = ((standard_token_array[2] - mydocument_token_array[2]) / standard_token_array[2]) * 100;
 	adverbs_covered = ((standard_token_array[3] - mydocument_token_array[3]) / standard_token_array[3]) * 100;
-	console.log(noun_covered + " " + adjectives_covered + " " + verbs_covered + " " + adverbs_covered);
 
 }
 
 //function to calculate similarity between user document and standard document
 function calculate_similarity() {
 	similarity = (stringSimilarity.compareTwoStrings(my_document, standard_document)) * 100;
-	console.log(similarity);
 }
 
 
@@ -197,7 +195,6 @@ function checking_spelling() {
 			incorrectWords.push(token_mydocument[i]);
 		}
 	}
-	console.log("These are the spelling mistakes you had : \n" + incorrectWords + "and you have these many mistakes \n: " + mistakes);
 }
 
 //fuction to check some keywords are present or not
@@ -213,9 +210,6 @@ function checking_keywords() {
 			concept_covered.push(token_keywords[i]);
 		}
 	}
-	
-	console.log("These are the concepts that you have covered :" + concept_covered);
-	console.log("\nExtra marks for that :" + extra_marks_given);
 }
 
 //calling the various function to see the output
