@@ -213,11 +213,7 @@ function checking_keywords() {
 }
 
 //calling the various function to see the output
-console.log(countwords_my);
-console.log(countwords_standard);
 check_word_limit();
-console.log(is_word_limit_ok);
-console.log(remark_to_reject_due_to_count);
 calculate_similarity();
 checking_spelling();
 checking_keywords();
