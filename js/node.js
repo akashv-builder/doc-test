@@ -2,10 +2,10 @@
 var fs = require('fs');
 var path = require("path");
 var natural = require('natural');
-var tokenizer = new natural.WordTokenizer(); 
-var WordPOS = require('wordpos'); 
-wordpos = new WordPOS(); 
-var stringSimilarity = require('string-similarity'); 
+var tokenizer = new natural.WordTokenizer();
+var WordPOS = require('wordpos');
+wordpos = new WordPOS();
+var stringSimilarity = require('string-similarity');
 readline = require('readline');
 
 //required to find the part of speech
@@ -17,6 +17,8 @@ var lexicon = new natural.Lexicon(lexiconFilename, defaultCategory);
 var rules = new natural.RuleSet(rulesFilename);
 var tagger = new natural.BrillPOSTagger(lexicon, rules);
 
+//each variable is stored in a json at the end 
+
 //variables to store part of speech % coverage
 var noun_covered = 0;
 var adjectives_covered = 0;
@@ -27,7 +29,7 @@ var adverbs_covered = 0;
 var is_word_limit_ok;
 
 //array to store differnt parts of speech
-var mydocument_token_array = new Array(); 
+var mydocument_token_array = new Array();
 var standard_token_array = new Array();
 
 //variable to store similarity
@@ -51,9 +53,9 @@ var remark_to_reject_due_to_count = 'None';
 
 //reading files required
 //reading base document
-var my_document = fs.readFileSync('../document/document.txt', 'utf-8'); 
+var my_document = fs.readFileSync('../document/document.txt', 'utf-8');
 //reading source document
-var standard_document = fs.readFileSync('../document/document2.txt', 'utf-8'); 
+var standard_document = fs.readFileSync('../document/document2.txt', 'utf-8');
 //reading keywords
 var keyWords = fs.readFileSync('../document/keyWords.txt', 'utf-8');
 //reading dictionary
@@ -83,144 +85,79 @@ function check_word_limit() {
 	}
 }
 
-
-//applying promise to calculate the different part of speech of base and store in array
-function calculate_speech_base(document) {
-	return new Promise((resolve, reject) => {
-	
-		var noun=0;
-var verb=0;
-var adverb=0;
-var adjective=0;
-var i=0;
-		var rl = readline.createInterface({
-      input : fs.createReadStream('../document/document.txt'),
-      output: process.stdout,
-      terminal: false
-})
-rl.on('line',function(line){
-    // console.log(i+""+line) //or parse line
-	i++;
-	var splitted_array=line.split(" ");
-	//console.log(splitted_array);
-	var output=tagger.tag(splitted_array);
-//console.log(output.length);
-	for(i=0;i<output.length;i++){
-	//console.log(output[i]);
-var x=output[i].join();
-var y=x.split(",");
-//console.log(y[1]);
-if(y[1]=="NN")
-	{
-	//	console.log("noun");
-		noun++;
-	}
-	if(y[1]=="VB")
-	{
-	//	console.log("verb");
-		verb++;
-	}
-	if(y[1]=="JJ")
-	{
-	//	console.log("adjective");
-		adjective++;
-	}
-	if(y[1]=="RB")
-	{
-	//	console.log("adverb");
-		adverb++;
-	}
-
-}
-	standard_token_array[0] =noun;
-	standard_token_array[1] =adjective;
-	standard_token_array[2] =verb;
-	standard_token_array[3] =adverb;
-	//console.log(noun+" "+verb+" "+adjective+" "+adverb);
-	resolve("completed");
-	
-})
-
-		
-
-		var n = 0;
-		if (n == 1) {
-			reject("failed");
+//calculate the part of speech for base and standard document
+function calculate_part_moudule(path_to_file, count) {
+	var noun = 0;
+	var verb = 0;
+	var adverb = 0;
+	var adjective = 0;
+	var i;
+	var rl = readline.createInterface({
+		input: fs.createReadStream(path_to_file),
+		output: process.stdout,
+		terminal: false
+	})
+	rl.on('line', function (line) {
+		var splitted_array = line.split(" ");
+		var output = tagger.tag(splitted_array);
+		for (i = 0; i < output.length; i++) {
+			var combined_string = output[i].join();
+			var splitting_by_comma = combined_string.split(",");
+			//based on part of speech increasing the counter
+			if (splitting_by_comma[1] == "NN") {
+				noun++;
+			}
+			if (splitting_by_comma[1] == "VB") {
+				verb++;
+			}
+			if (splitting_by_comma[1] == "JJ") {
+				adjective++;
+			}
+			if (splitting_by_comma[1] == "RB") {
+				adverb++;
+			}
 
 		}
+		if (count == 1) {
+			standard_token_array[0] = noun;
+			standard_token_array[1] = adjective;
+			standard_token_array[2] = verb;
+			standard_token_array[3] = adverb;
+			//console.log(noun+" "+verb+" "+adjective+" "+adverb);
+		} else {
+			mydocument_token_array[0] = noun;
+			mydocument_token_array[1] = adjective;
+			mydocument_token_array[2] = verb;
+			mydocument_token_array[3] = adverb;
+			//console.log(noun+" "+verb+" "+adjective+" "+adverb);
+		}
+	})
+	var n = 0;
+	if (n == 1) {
+		reject("failed");
+
+	}
+}
+//applying promise to calculate the different part of speech of base and store in array
+function calculate_speech_base() {
+	return new Promise((resolve, reject) => {
+		calculate_part_moudule('../document/document.txt', 1);
+		resolve("completed");
 	});
 }
 
 
 //then of function calculate_token_base in this calling function calculate_token_standard
-calculate_speech_base(standard_document).then((message) => {
-		function calculate_speech_my(document) {
+calculate_speech_base().then((message) => {
+		function calculate_speech_my() {
 			return new Promise((resolve, reject) => {
-		
-				var noun=0;
-var verb=0;
-var adverb=0;
-var adjective=0;
-var i=0;
-		var rl = readline.createInterface({
-      input : fs.createReadStream('../document/document2.txt'),
-      output: process.stdout,
-      terminal: false
-})
-rl.on('line',function(line){
-     //console.log(i+""+line) //or parse line
-	i++;
-	var splitted_array=line.split(" ");
-//	console.log(splitted_array);
-	var output=tagger.tag(splitted_array);
-//console.log(output.length);
-	for(i=0;i<output.length;i++){
-	//console.log(output[i]);
-var x=output[i].join();
-var y=x.split(",");
-//console.log(y[1]);
-if(y[1]=="NN")
-	{
-	//	console.log("noun");
-		noun++;
-	}
-	if(y[1]=="VB")
-	{
-		//console.log("verb");
-		verb++;
-	}
-	if(y[1]=="JJ")
-	{
-		//console.log("adjective");
-		adjective++;
-	}
-	if(y[1]=="RB")
-	{
-	//	console.log("adverb");
-		adverb++;
-	}
+				calculate_part_moudule('../document/document2.txt', 2);
+				resolve("completed");
 
-}
-	mydocument_token_array[0] =noun;
-	mydocument_token_array[1] =adjective;
-	mydocument_token_array[2] =verb;
-	mydocument_token_array[3] =adverb;
-	//console.log(noun+" "+verb+" "+adjective+" "+adverb);
-	resolve("completed");
-	
-})
-
-				var n = 0;
-				if (n == 1) {
-					reject("failed");
-
-				}
 			});
 		}
-
-
 		//then of function calculate_token_standard once it completes performing the other tasks
-		calculate_speech_my(my_document).then((message) => {
+		calculate_speech_my().then((message) => {
 				//calling token variation method
 				calculate_token_variation();
 				//creating the json
@@ -231,14 +168,11 @@ if(y[1]=="NN")
 				console.log("****************Failed**********************");
 			});
 
-
 	})
 	.catch((message) => {
 
 		console.log("****************Failed**********************");
 	});
-
-
 
 //function to print noun, adjectieves, verb, adverb of user document
 function print_mydocument_token() {
@@ -339,7 +273,7 @@ function json_creation() {
 		}
 	};
 
-	
+
 	//converting json object to string and stroing in file
 	var json = JSON.stringify(output, null, 2);
 	fs.writeFile('../json/myjsondata.json', json, 'utf8', (err) => {
