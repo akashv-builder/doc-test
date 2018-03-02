@@ -12,7 +12,7 @@ var rules = new natural.RuleSet(rulesFilename);
 var tagger = new natural.BrillPOSTagger(lexicon, rules);
 
 var sentence = fs.readFileSync('document.txt', 'utf-8'); 
-
+/*
 var noun=0;
 var verb=0;
 var adverb=0;
@@ -62,12 +62,26 @@ if(y[1]=="NN")
 	console.log(noun+" "+verb+" "+adjective+" "+adverb);
 	
 })
+*/
 
 
+var natural = require("natural");
+var path = require("path");
+var fs = require('fs');
 
-/*var splitted_array="I think this world is full of chutiya Financially".split(" ");
+var base_folder = path.join(path.dirname(require.resolve("natural")), "brill_pos_tagger");
+var rulesFilename = base_folder + "/data/English/tr_from_posjs.txt";
+var lexiconFilename = base_folder + "/data/English/lexicon_from_posjs.json";
+var defaultCategory = 'N';
+
+var lexicon = new natural.Lexicon(lexiconFilename, defaultCategory);
+var rules = new natural.RuleSet(rulesFilename);
+var tagger = new natural.BrillPOSTagger(lexicon, rules);
+var splitted_array="I think this world is full of chutiya Financially".split(" ");
 var output=tagger.tag(splitted_array);
+console.log(output);
 console.log(output.length);
+/*
 for(i=0;i<output.length;i++){
 	console.log(output[i]);
 var x=output[i].join();
@@ -90,6 +104,7 @@ if(y[1]=="NN")
 		console.log("adverb");
 	}
 
-}*/
+}
+*/
 
 //NN-noun, VB-verb, JJ-adjective RB-adverb

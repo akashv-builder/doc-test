@@ -84,25 +84,11 @@ function check_word_limit() {
 	}
 }
 
+
 //applying promise to calculate the different part of speech of base and store in array
 function calculate_speech_base(document) {
 	return new Promise((resolve, reject) => {
-		/*wordpos.getNouns(document, function (result) {
-			standard_token_array[0] = result.length;
-		});
-
-		wordpos.getAdjectives(document, function (result) {
-			standard_token_array[1] = result.length;
-		});
-
-		wordpos.getVerbs(document, function (result) {
-			standard_token_array[2] = result.length;
-		});
-
-		wordpos.getAdverbs(document, function (result) {
-			standard_token_array[3] = result.length;
-			resolve("completed");
-		});*/
+	
 		var noun=0;
 var verb=0;
 var adverb=0;
@@ -171,22 +157,7 @@ if(y[1]=="NN")
 calculate_speech_base(standard_document).then((message) => {
 		function calculate_speech_my(document) {
 			return new Promise((resolve, reject) => {
-				/*wordpos.getNouns(document, function (result) {
-					mydocument_token_array[0] = result.length;
-				});
-
-				wordpos.getAdjectives(document, function (result) {
-					mydocument_token_array[1] = result.length;
-				});
-
-				wordpos.getVerbs(document, function (result) {
-					mydocument_token_array[2] = result.length;
-				});
-
-				wordpos.getAdverbs(document, function (result) {
-					mydocument_token_array[3] = result.length;
-					resolve("completed");
-				});*/
+		
 				var noun=0;
 var verb=0;
 var adverb=0;
