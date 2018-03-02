@@ -3,6 +3,8 @@ var fs = require('fs');
 var path = require("path");
 var natural = require('natural');
 var tokenizer = new natural.WordTokenizer();
+var WordPOS = require('wordpos');
+wordpos = new WordPOS();
 var stringSimilarity = require('string-similarity');
 readline = require('readline');
 
@@ -14,6 +16,8 @@ var defaultCategory = 'N';
 var lexicon = new natural.Lexicon(lexiconFilename, defaultCategory);
 var rules = new natural.RuleSet(rulesFilename);
 var tagger = new natural.BrillPOSTagger(lexicon, rules);
+
+//each variable is stored in a json at the end 
 
 //variables to store part of speech % coverage
 var noun_covered = 0;
@@ -81,109 +85,82 @@ function check_word_limit() {
 	}
 }
 
-//applying promise to calculate the different part of speech of base and store in array
-function calculate_speech_base() {
-	return new Promise((resolve, reject) => {
-
-		var noun = 0;
-		var verb = 0;
-		var adverb = 0;
-		var adjective = 0;
-		var i = 0;
-		var rl = readline.createInterface({
-			input: fs.createReadStream('../document/document.txt'),
-			output: process.stdout,
-			terminal: false
-		})
-		rl.on('line', function (line) {
-			i++;
-			var splitted_array = line.split(" ");
-			var output = tagger.tag(splitted_array);
-			for (i = 0; i < output.length; i++) {
-				var combined_string = output[i].join();
-				var splitting_by_comma = combined_string.split(",");
-				//based on part of speech increasing the counter
-				if (splitting_by_comma[1] == "NN") {
-					noun++;
-				}
-				if (splitting_by_comma[1] == "VB") {
-					verb++;
-				}
-				if (splitting_by_comma[1] == "JJ") {
-					adjective++;
-				}
-				if (splitting_by_comma[1] == "RB") {
-					adverb++;
-				}
+//calculate the part of speech for base and standard document
+function calculate_part_moudule(path_to_file, count) {
+	console.log("inside"+count);
+	var noun = 0;
+	var verb = 0;
+	var adverb = 0;
+	var adjective = 0;
+	var i;
+	var rl = readline.createInterface({
+		input: fs.createReadStream(path_to_file),
+		output: process.stdout,
+		terminal: false
+	})
+	rl.on('line', function (line) {
+		var splitted_array = line.split(" ");
+		var output = tagger.tag(splitted_array);
+		for (i = 0; i < output.length; i++) {
+			var combined_string = output[i].join();
+			var splitting_by_comma = combined_string.split(",");
+			//based on part of speech increasing the counter
+			if (splitting_by_comma[1] == "NN") {
+				noun++;
 			}
-			//adding to array
+			if (splitting_by_comma[1] == "VB") {
+				verb++;
+			}
+			if (splitting_by_comma[1] == "JJ") {
+				adjective++;
+			}
+			if (splitting_by_comma[1] == "RB") {
+				adverb++;
+			}
+
+		}
+		if (count == 1) {
 			standard_token_array[0] = noun;
 			standard_token_array[1] = adjective;
 			standard_token_array[2] = verb;
 			standard_token_array[3] = adverb;
-			resolve("completed");
-
-		})
-		var n = 0;
-		if (n == 1) {
-			reject("failed");
-
+		} else {
+			mydocument_token_array[0] = noun;
+			mydocument_token_array[1] = adjective;
+			mydocument_token_array[2] = verb;
+			mydocument_token_array[3] = adverb;
 		}
+	})
+	
+}
+//applying promise to calculate the different part of speech of base and store in array
+function calculate_speech_base() {
+	return new Promise((resolve, reject) => {
+		calculate_part_moudule('../document/document.txt', 1);
+		resolve("completed");
+		console.log("already going2");
+		var n = 0;
+	if (n == 1) {
+		reject("failed");
+	}
 	});
 }
+
+
 //then of function calculate_token_base in this calling function calculate_token_standard
 calculate_speech_base().then((message) => {
 		function calculate_speech_my() {
 			return new Promise((resolve, reject) => {
-
-				var noun = 0;
-				var verb = 0;
-				var adverb = 0;
-				var adjective = 0;
-				var i = 0;
-				var rl = readline.createInterface({
-					input: fs.createReadStream('../document/document2.txt'),
-					output: process.stdout,
-					terminal: false
-				})
-				rl.on('line', function (line) {
-					i++;
-					var splitted_array = line.split(" ");
-					var output = tagger.tag(splitted_array);
-					for (i = 0; i < output.length; i++) {
-						var combined_string = output[i].join();
-						var splitting_by_comma = combined_string.split(",");
-						//based on part of speech increasing the counter
-						if (splitting_by_comma[1] == "NN") {
-							noun++;
-						}
-						if (splitting_by_comma[1] == "VB") {
-							verb++;
-						}
-						if (splitting_by_comma[1] == "JJ") {
-							adjective++;
-						}
-						if (splitting_by_comma[1] == "RB") {
-							adverb++;
-						}
-
-					}
-					//adding to array
-					mydocument_token_array[0] = noun;
-					mydocument_token_array[1] = adjective;
-					mydocument_token_array[2] = verb;
-					mydocument_token_array[3] = adverb;
-					resolve("completed");
-
-				})
+				calculate_part_moudule('../document/document2.txt', 2);
+				resolve("completed");
+				console.log("already going1");
 				var n = 0;
-				if (n == 1) {
-					reject("failed");
-				}
+	if (n == 1) {
+		reject("failed");
+
+	}
 			});
 		}
-
-
 		//then of function calculate_token_standard once it completes performing the other tasks
 		calculate_speech_my().then((message) => {
 				//calling token variation method
@@ -196,14 +173,11 @@ calculate_speech_base().then((message) => {
 				console.log("****************Failed**********************");
 			});
 
-
 	})
 	.catch((message) => {
 
 		console.log("****************Failed**********************");
 	});
-
-
 
 //function to print noun, adjectieves, verb, adverb of user document
 function print_mydocument_token() {
@@ -275,12 +249,12 @@ checking_keywords();
 function json_creation() {
 	var output = {
 		myjsonobj: {
-						//adding no of words
+			//adding no of words
 			no_of_words: {
 				standard: countwords_standard,
 				user_doc: countwords_my
 			},
-//adding word limit and remark
+			//adding word limit and remark
 			word_limit_ok: is_word_limit_ok,
 			remark_to_reject: remark_to_reject_due_to_count,
 			similarity_btw_document: similarity,
@@ -309,14 +283,15 @@ function json_creation() {
 		}
 	};
 
-
 	//converting json object to string and stroing in file
 	var json = JSON.stringify(output, null, 2);
 	fs.writeFile('../json/myjsondata.json', json, 'utf8', (err) => {
 		if (err) {
+			//in case of error
 			console.log("error");
 			return;
 		}
+		//in case of success
 		console.log("success");
 	})
 }
