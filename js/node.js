@@ -244,26 +244,31 @@ checking_keywords();
 function json_creation() {
 	var output = {
 		myjsonobj: {
+			//adding no of words
 			no_of_words: {
 				standard: countwords_standard,
 				user_doc: countwords_my
 			},
-
+			//adding word limit and remark
 			word_limit_ok: is_word_limit_ok,
 			remark_to_reject: remark_to_reject_due_to_count,
 			similarity_btw_document: similarity,
+			//adding spelling mistakes
 			spelling: {
 				no_of_mistakes: mistakes,
 				incorrect_words: incorrectWords
 			},
+			//adding concepts covered
 			core_concept: {
 				no_extra_marks: extra_marks_given,
 				concept_covered: concept_covered
 			},
+			//adding part of speech
 			part_of_speech: {
 				standard_speech: standard_token_array,
 				user_doc_speech: mydocument_token_array
 			},
+			//adding variation
 			part_of_speech_variation: {
 				noun_variation: Math.abs(noun_covered),
 				adjective_variation: Math.abs(adjectives_covered),
@@ -278,9 +283,11 @@ function json_creation() {
 	var json = JSON.stringify(output, null, 2);
 	fs.writeFile('../json/myjsondata.json', json, 'utf8', (err) => {
 		if (err) {
+			//in case of error
 			console.log("error");
 			return;
 		}
+		//in case of success
 		console.log("success");
 	})
 }
