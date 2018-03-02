@@ -1,11 +1,21 @@
 //declaration of different libraries to be used 
 var fs = require('fs');
+var path = require("path");
 var natural = require('natural');
 var tokenizer = new natural.WordTokenizer(); 
-var wordcount = require('word-count'); 
 var WordPOS = require('wordpos'); 
 wordpos = new WordPOS(); 
 var stringSimilarity = require('string-similarity'); 
+readline = require('readline');
+
+//required to find the part of speech
+var base_folder = path.join(path.dirname(require.resolve("natural")), "brill_pos_tagger");
+var rulesFilename = base_folder + "/data/English/tr_from_posjs.txt";
+var lexiconFilename = base_folder + "/data/English/lexicon_from_posjs.json";
+var defaultCategory = 'N';
+var lexicon = new natural.Lexicon(lexiconFilename, defaultCategory);
+var rules = new natural.RuleSet(rulesFilename);
+var tagger = new natural.BrillPOSTagger(lexicon, rules);
 
 //variables to store part of speech % coverage
 var noun_covered = 0;
@@ -17,8 +27,8 @@ var adverbs_covered = 0;
 var is_word_limit_ok;
 
 //array to store differnt parts of speech
-var mydocument_token_array = new Array(4); 
-var standard_token_array = new Array(4);
+var mydocument_token_array = new Array(); 
+var standard_token_array = new Array();
 
 //variable to store similarity
 var similarity = 0;
@@ -51,8 +61,10 @@ var dictionary = fs.readFileSync('dictionary.txt', 'utf-8');
 
 
 //counting words of user document and standard document
-var countwords_my = wordcount(my_document);
-var countwords_standard = wordcount(standard_document);
+var countwords_my = my_document.length;
+var countwords_standard = standard_document.length;
+console.log(countwords_my);
+console.log(countwords_standard);
 
 //function to check word limit
 function check_word_limit() {
@@ -75,7 +87,7 @@ function check_word_limit() {
 //applying promise to calculate the different part of speech of base and store in array
 function calculate_speech_base(document) {
 	return new Promise((resolve, reject) => {
-		wordpos.getNouns(document, function (result) {
+		/*wordpos.getNouns(document, function (result) {
 			standard_token_array[0] = result.length;
 		});
 
@@ -90,7 +102,61 @@ function calculate_speech_base(document) {
 		wordpos.getAdverbs(document, function (result) {
 			standard_token_array[3] = result.length;
 			resolve("completed");
-		});
+		});*/
+		var noun=0;
+var verb=0;
+var adverb=0;
+var adjective=0;
+var i=0;
+		var rl = readline.createInterface({
+      input : fs.createReadStream('document.txt'),
+      output: process.stdout,
+      terminal: false
+})
+rl.on('line',function(line){
+    // console.log(i+""+line) //or parse line
+	i++;
+	var splitted_array=line.split(" ");
+	//console.log(splitted_array);
+	var output=tagger.tag(splitted_array);
+//console.log(output.length);
+	for(i=0;i<output.length;i++){
+	//console.log(output[i]);
+var x=output[i].join();
+var y=x.split(",");
+//console.log(y[1]);
+if(y[1]=="NN")
+	{
+	//	console.log("noun");
+		noun++;
+	}
+	if(y[1]=="VB")
+	{
+	//	console.log("verb");
+		verb++;
+	}
+	if(y[1]=="JJ")
+	{
+	//	console.log("adjective");
+		adjective++;
+	}
+	if(y[1]=="RB")
+	{
+	//	console.log("adverb");
+		adverb++;
+	}
+
+}
+	standard_token_array[0] =noun;
+	standard_token_array[1] =adjective;
+	standard_token_array[2] =verb;
+	standard_token_array[3] =adverb;
+	//console.log(noun+" "+verb+" "+adjective+" "+adverb);
+	resolve("completed");
+	
+})
+
+		
 
 		var n = 0;
 		if (n == 1) {
@@ -105,7 +171,7 @@ function calculate_speech_base(document) {
 calculate_speech_base(standard_document).then((message) => {
 		function calculate_speech_my(document) {
 			return new Promise((resolve, reject) => {
-				wordpos.getNouns(document, function (result) {
+				/*wordpos.getNouns(document, function (result) {
 					mydocument_token_array[0] = result.length;
 				});
 
@@ -120,7 +186,59 @@ calculate_speech_base(standard_document).then((message) => {
 				wordpos.getAdverbs(document, function (result) {
 					mydocument_token_array[3] = result.length;
 					resolve("completed");
-				});
+				});*/
+				var noun=0;
+var verb=0;
+var adverb=0;
+var adjective=0;
+var i=0;
+		var rl = readline.createInterface({
+      input : fs.createReadStream('document2.txt'),
+      output: process.stdout,
+      terminal: false
+})
+rl.on('line',function(line){
+     //console.log(i+""+line) //or parse line
+	i++;
+	var splitted_array=line.split(" ");
+//	console.log(splitted_array);
+	var output=tagger.tag(splitted_array);
+//console.log(output.length);
+	for(i=0;i<output.length;i++){
+	//console.log(output[i]);
+var x=output[i].join();
+var y=x.split(",");
+//console.log(y[1]);
+if(y[1]=="NN")
+	{
+	//	console.log("noun");
+		noun++;
+	}
+	if(y[1]=="VB")
+	{
+		//console.log("verb");
+		verb++;
+	}
+	if(y[1]=="JJ")
+	{
+		//console.log("adjective");
+		adjective++;
+	}
+	if(y[1]=="RB")
+	{
+	//	console.log("adverb");
+		adverb++;
+	}
+
+}
+	mydocument_token_array[0] =noun;
+	mydocument_token_array[1] =adjective;
+	mydocument_token_array[2] =verb;
+	mydocument_token_array[3] =adverb;
+	//console.log(noun+" "+verb+" "+adjective+" "+adverb);
+	resolve("completed");
+	
+})
 
 				var n = 0;
 				if (n == 1) {
@@ -243,10 +361,10 @@ function json_creation() {
 				user_doc_speech: mydocument_token_array
 			},
 			part_of_speech_variation: {
-				noun_variation: noun_covered,
-				adjective_variation: adjectives_covered,
-				verb_variation: verbs_covered,
-				adverb_variation: adjectives_covered
+				noun_variation: Math.abs(noun_covered),
+				adjective_variation: Math.abs(adjectives_covered),
+				verb_variation: Math.abs(verbs_covered),
+				adverb_variation: Math.abs(adjectives_covered)
 			}
 		}
 	};
