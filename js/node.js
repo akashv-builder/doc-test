@@ -46,25 +46,23 @@ var extra_marks_given = 0;
 var concept_covered = new Array();
 
 //varible to store remark to reject
-var remark_to_reject_due_to_count = 'null';
+var remark_to_reject_due_to_count = 'None';
 
 
 //reading files required
 //reading base document
-var my_document = fs.readFileSync('document.txt', 'utf-8'); 
+var my_document = fs.readFileSync('../document/document.txt', 'utf-8'); 
 //reading source document
-var standard_document = fs.readFileSync('document2.txt', 'utf-8'); 
+var standard_document = fs.readFileSync('../document/document2.txt', 'utf-8'); 
 //reading keywords
-var keyWords = fs.readFileSync('keyWords.txt', 'utf-8');
+var keyWords = fs.readFileSync('../document/keyWords.txt', 'utf-8');
 //reading dictionary
-var dictionary = fs.readFileSync('dictionary.txt', 'utf-8');
+var dictionary = fs.readFileSync('../document/dictionary.txt', 'utf-8');
 
 
 //counting words of user document and standard document
 var countwords_my = my_document.length;
 var countwords_standard = standard_document.length;
-console.log(countwords_my);
-console.log(countwords_standard);
 
 //function to check word limit
 function check_word_limit() {
@@ -81,6 +79,7 @@ function check_word_limit() {
 		return;
 	} else {
 		is_word_limit_ok = "yes";
+		remark_to_reject_due_to_count = "None";
 	}
 }
 
@@ -95,7 +94,7 @@ var adverb=0;
 var adjective=0;
 var i=0;
 		var rl = readline.createInterface({
-      input : fs.createReadStream('document.txt'),
+      input : fs.createReadStream('../document/document.txt'),
       output: process.stdout,
       terminal: false
 })
@@ -164,7 +163,7 @@ var adverb=0;
 var adjective=0;
 var i=0;
 		var rl = readline.createInterface({
-      input : fs.createReadStream('document2.txt'),
+      input : fs.createReadStream('../document/document2.txt'),
       output: process.stdout,
       terminal: false
 })
@@ -343,7 +342,7 @@ function json_creation() {
 	
 	//converting json object to string and stroing in file
 	var json = JSON.stringify(output, null, 2);
-	fs.writeFile('myjsondata.json', json, 'utf8', (err) => {
+	fs.writeFile('../json/myjsondata.json', json, 'utf8', (err) => {
 		if (err) {
 			console.log("error");
 			return;

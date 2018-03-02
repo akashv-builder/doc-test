@@ -5,7 +5,7 @@
       "user_doc": 8864
     },
     "word_limit_ok": "yes",
-    "remark_to_reject": "None",
+    "remark_to_reject": "null",
     "similarity_btw_document": 64.33679864336798,
     "spelling": {
       "no_of_mistakes": 146,
