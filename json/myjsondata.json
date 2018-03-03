@@ -187,14 +187,24 @@
       ]
     },
     "part_of_speech": {
-      "standard_speech": [],
-      "user_doc_speech": []
+      "standard_speech": [
+        72,
+        48,
+        22,
+        8
+      ],
+      "user_doc_speech": [
+        170,
+        53,
+        53,
+        25
+      ]
     },
     "part_of_speech_variation": {
-      "noun_variation": null,
-      "adjective_variation": null,
-      "verb_variation": null,
-      "adverb_variation": null
+      "noun_variation": 136.11111111111111,
+      "adjective_variation": 10.416666666666668,
+      "verb_variation": 140.9090909090909,
+      "adverb_variation": 10.416666666666668
     }
   }
 }
