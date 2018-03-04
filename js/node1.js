@@ -3,10 +3,6 @@ var fs = require('fs');
 var path = require("path");
 var natural = require('natural');
 var tokenizer = new natural.WordTokenizer();
-var WordPOS = require('wordpos');
-wordpos = new WordPOS();
-var stringSimilarity = require('string-similarity');
-readline = require('readline');
 
 //required to find the part of speech
 var base_folder = path.join(path.dirname(require.resolve("natural")), "brill_pos_tagger");
@@ -50,7 +46,6 @@ var concept_covered = new Array();
 //varible to store remark to reject
 var remark_to_reject_due_to_count = 'None';
 
-
 //reading files required
 //reading base document
 var my_document = fs.readFileSync('../document/document.txt', 'utf-8');
@@ -63,13 +58,15 @@ var dictionary = fs.readFileSync('../document/dictionary.txt', 'utf-8');
 
 
 //counting words of user document and standard document
-var countwords_my = my_document.length;
-var countwords_standard = standard_document.length;
+var countwords_my = (tokenizer.tokenize(my_document)).length;
+var countwords_standard = (tokenizer.tokenize(standard_document)).length;
+console.log(countwords_my);
+console.log(countwords_standard);
 
 //function to check word limit
 function check_word_limit() {
 	//formula to calculate range variation
-	var range1 = countwords_standard - countwords_standard * 0.1; //What is this formulae for?
+	var range1 = countwords_standard - countwords_standard * 0.1;
 	var range2 = countwords_standard + countwords_standard * 0.1;
 	if (countwords_my < range1 || countwords_my > range2) {
 		is_word_limit_ok = "No";
@@ -86,98 +83,53 @@ function check_word_limit() {
 }
 
 //calculate the part of speech for base and standard document
-function calculate_part_moudule(path_to_file, count) {
-	console.log("inside"+count);
+function calculate_part_moudule(tokenized_document, count) {
 	var noun = 0;
 	var verb = 0;
 	var adverb = 0;
 	var adjective = 0;
-	var i;
-	var rl = readline.createInterface({
-		input: fs.createReadStream(path_to_file),
-		output: process.stdout,
-		terminal: false
-	})
-	rl.on('line', function (line) {
-		var splitted_array = line.split(" ");
-		var output = tagger.tag(splitted_array);
-		for (i = 0; i < output.length; i++) {
-			var combined_string = output[i].join();
-			var splitting_by_comma = combined_string.split(",");
-			//based on part of speech increasing the counter
-			if (splitting_by_comma[1] == "NN") {
-				noun++;
-			}
-			if (splitting_by_comma[1] == "VB") {
-				verb++;
-			}
-			if (splitting_by_comma[1] == "JJ") {
-				adjective++;
-			}
-			if (splitting_by_comma[1] == "RB") {
-				adverb++;
-			}
+	var json = tagger.tag(tokenized_document);
 
+	for (i = 0; i < tokenized_document.length; i++) {
+		if (json[i][1] == 'NN' || json[i][1] == 'NNP' || json[i][1] == 'NNPS' || json[i][1] == 'NNS') {
+			noun++;
+		} else if (json[i][1] == 'VB' || json[i][1] == 'VBD' || json[i][1] == 'VBG' || json[i][1] == 'VBP' || json[i][1] == 'VBN' || json[i][1] == 'VBZ') {
+			verb++;
+		} else if (json[i][1] == 'JJ' || json[i][1] == 'JJR' || json[i][1] == 'JJS') {
+			adjective++;
+		} else if (json[i][1] == "RB") {
+			adverb++;
 		}
-		if (count == 1) {
-			standard_token_array[0] = noun;
-			standard_token_array[1] = adjective;
-			standard_token_array[2] = verb;
-			standard_token_array[3] = adverb;
-		} else {
-			mydocument_token_array[0] = noun;
-			mydocument_token_array[1] = adjective;
-			mydocument_token_array[2] = verb;
-			mydocument_token_array[3] = adverb;
-		}
-	})
-	
+
+	}
+	//based on part of speech increasing the counter
+	if (count == 1) {
+		standard_token_array[0] = noun;
+		standard_token_array[1] = adjective;
+		standard_token_array[2] = verb;
+		standard_token_array[3] = adverb;
+	} else {
+		mydocument_token_array[0] = noun;
+		mydocument_token_array[1] = adjective;
+		mydocument_token_array[2] = verb;
+		mydocument_token_array[3] = adverb;
+	}
+
 }
 //applying promise to calculate the different part of speech of base and store in array
 function calculate_speech_base() {
-	return new Promise((resolve, reject) => {
-		calculate_part_moudule('../document/document.txt', 1);
-		resolve("completed");
-		console.log("already going2");
-		var n = 0;
-	if (n == 1) {
-		reject("failed");
-	}
-	});
+
+	calculate_part_moudule(tokenizer.tokenize(standard_document), 1);
+
 }
 
 
 //then of function calculate_token_base in this calling function calculate_token_standard
-calculate_speech_base().then((message) => {
-		function calculate_speech_my() {
-			return new Promise((resolve, reject) => {
-				calculate_part_moudule('../document/document2.txt', 2);
-				resolve("completed");
-				console.log("already going1");
-				var n = 0;
-	if (n == 1) {
-		reject("failed");
 
-	}
-			});
-		}
-		//then of function calculate_token_standard once it completes performing the other tasks
-		calculate_speech_my().then((message) => {
-				//calling token variation method
-				calculate_token_variation();
-				//creating the json
-				json_creation();
-			})
-			.catch((message) => {
+function calculate_speech_my() {
 
-				console.log("****************Failed**********************");
-			});
-
-	})
-	.catch((message) => {
-
-		console.log("****************Failed**********************");
-	});
+	calculate_part_moudule(tokenizer.tokenize(my_document), 2);
+}
 
 //function to print noun, adjectieves, verb, adverb of user document
 function print_mydocument_token() {
@@ -206,7 +158,7 @@ function calculate_token_variation() {
 
 //function to calculate similarity between user document and standard document
 function calculate_similarity() {
-	similarity = (stringSimilarity.compareTwoStrings(my_document, standard_document)) * 100;
+	similarity = parseInt((natural.JaroWinklerDistance(my_document, standard_document)) * 100);
 }
 
 
@@ -244,6 +196,11 @@ check_word_limit();
 calculate_similarity();
 checking_spelling();
 checking_keywords();
+calculate_speech_base();
+calculate_speech_my();
+calculate_token_variation()
+json_creation();
+
 
 //function to create json
 function json_creation() {
