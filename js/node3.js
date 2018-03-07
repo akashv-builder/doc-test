@@ -163,6 +163,7 @@ promises.push(calculate_speech_base);
 promises.push(calculate_speech_my);
 	Promise.all(promises).then(function(value) { 
 				//calling token variation method
+		console.log("hi")
 				calculate_token_variation();
 				//creating the json
 				json_creation();

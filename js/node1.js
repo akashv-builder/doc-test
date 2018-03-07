@@ -118,7 +118,7 @@ function calculate_part_moudule(tokenized_document, count) {
 }
 //applying promise to calculate the different part of speech of base and store in array
 function calculate_speech_base() {
-
+	//the second argument is a flag, if flag is 1 that means the method that is called will put all the calculted part of speech in standard document array, else if it is 2 it will put in my document array
 	calculate_part_moudule(tokenizer.tokenize(standard_document), 1);
 
 }
@@ -127,7 +127,7 @@ function calculate_speech_base() {
 //then of function calculate_token_base in this calling function calculate_token_standard
 
 function calculate_speech_my() {
-
+	//the second argument is a flag, if flag is 1 that means the method that is called will put all the calculted part of speech in standard document array, else if it is 2 it will put in my document array
 	calculate_part_moudule(tokenizer.tokenize(my_document), 2);
 }
 

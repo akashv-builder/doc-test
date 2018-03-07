@@ -1,12 +1,12 @@
 {
   "myjsonobj": {
     "no_of_words": {
-      "standard": 1574,
-      "user_doc": 1328
+      "standard": 9126,
+      "user_doc": 8864
     },
-    "word_limit_ok": "No",
-    "remark_to_reject": "Words are less then expected.",
-    "similarity_btw_document": 84,
+    "word_limit_ok": "yes",
+    "remark_to_reject": "None",
+    "similarity_btw_document": 64.33679864336798,
     "spelling": {
       "no_of_mistakes": 146,
       "incorrect_words": [
@@ -187,24 +187,14 @@
       ]
     },
     "part_of_speech": {
-      "standard_speech": [
-        460,
-        80,
-        209,
-        26
-      ],
-      "user_doc_speech": [
-        488,
-        84,
-        112,
-        12
-      ]
+      "standard_speech": [],
+      "user_doc_speech": []
     },
     "part_of_speech_variation": {
-      "noun_variation": 6.086956521739131,
-      "adjective_variation": 5,
-      "verb_variation": 46.411483253588514,
-      "adverb_variation": 5
+      "noun_variation": null,
+      "adjective_variation": null,
+      "verb_variation": null,
+      "adverb_variation": null
     }
   }
 }
