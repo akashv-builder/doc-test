@@ -60,8 +60,6 @@ var dictionary = fs.readFileSync('../document/dictionary.txt', 'utf-8');
 //counting words of user document and standard document
 var countwords_my = (tokenizer.tokenize(my_document)).length;
 var countwords_standard = (tokenizer.tokenize(standard_document)).length;
-console.log(countwords_my);
-console.log(countwords_standard);
 
 //function to check word limit
 function check_word_limit() {
